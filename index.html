@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>3 Columns with From-To Months and Years</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
+.controls { padding:15px; text-align:center; background:#fff; border-bottom:1px solid #ccc; }
+select, button { padding:6px 10px; margin:5px; font-size:14px; }
+
+.page {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  align-items: center;
+  padding: 1cm;
+  gap: 1cm;
+}
+
+.label {
+  width: 5cm;
+  height: 13cm;
+  border: 5px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.content {
+  text-align: center;
+  font-weight: bold;
+  line-height: 1.2;
+  font-size: 14px;
+}
+
+.content p {
+  margin: 4px 0;
+}
+
+@media print {
+  .controls { display: none; }
+  body { background: #fff; }
+  @page { size: A4 landscape; margin: 1cm; }
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <!-- Column 1 -->
+  <select id="c1"></select>
+  <select id="fm1"></select>
+  <select id="fy1"><option>2025</option><option selected>2026</option><option>2027</option></select>
+  <select id="tm1"></select>
+  <select id="ty1"><option>2025</option><option selected>2026</option><option>2027</option></select>
+  <br />
+  <!-- Column 2 -->
+  <select id="c2"></select>
+  <select id="fm2"></select>
+  <select id="fy2"><option>2025</option><option selected>2026</option><option>2027</option></select>
+  <select id="tm2"></select>
+  <select id="ty2"><option>2025</option><option selected>2026</option><option>2027</option></select>
+  <br />
+  <!-- Column 3 -->
+  <select id="c3"></select>
+  <select id="fm3"></select>
+  <select id="fy3"><option>2025</option><option selected>2026</option><option>2027</option></select>
+  <select id="tm3"></select>
+  <select id="ty3"><option>2025</option><option selected>2026</option><option>2027</option></select>
+  <br />
+  <button onclick="generate()">Update</button>
+  <button onclick="window.print()">Print</button>
+</div>
+
+<div class="page" id="labels"></div>
+
+<script>
+const companies = [
+  "CHOP YEW LEE PETROLEUM SDN BHD",
+  "CHOP YEW LEE",
+  "CHOP YEW LEE ENERGY",
+  "IPTISAN SDN BHD",
+  "REPTRANS PETROLEUM SDN BHD"
+];
+
+const months = ["BLANK","JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+
+// Populate company selectors
+["c1","c2","c3"].forEach(id => {
+  const el = document.getElementById(id);
+  companies.forEach(c => el.innerHTML += `<option>${c}</option>`);
+});
+
+// Populate month selectors
+["fm1","tm1","fm2","tm2","fm3","tm3"].forEach(id => {
+  const el = document.getElementById(id);
+  months.forEach(m => el.innerHTML += `<option>${m}</option>`);
+});
+
+function generate() {
+  const labels = [
+    {
+      company: document.getElementById("c1").value,
+      fromMonth: document.getElementById("fm1").value,
+      fromYear: document.getElementById("fy1").value,
+      toMonth: document.getElementById("tm1").value,
+      toYear: document.getElementById("ty1").value
+    },
+    {
+      company: document.getElementById("c2").value,
+      fromMonth: document.getElementById("fm2").value,
+      fromYear: document.getElementById("fy2").value,
+      toMonth: document.getElementById("tm2").value,
+      toYear: document.getElementById("ty2").value
+    },
+    {
+      company: document.getElementById("c3").value,
+      fromMonth: document.getElementById("fm3").value,
+      fromYear: document.getElementById("fy3").value,
+      toMonth: document.getElementById("tm3").value,
+      toYear: document.getElementById("ty3").value
+    }
+  ];
+
+  const container = document.getElementById("labels");
+  container.innerHTML = "";
+
+  labels.forEach(label => {
+    let monthText = "";
+    if(label.fromMonth === "BLANK" && label.toMonth === "BLANK") {
+      monthText = "";
+    } else if(label.fromMonth === "BLANK") {
+      monthText = `${label.toMonth} ${label.toYear}`;
+    } else if(label.toMonth === "BLANK") {
+      monthText = `${label.fromMonth} ${label.fromYear}`;
+    } else {
+      monthText = `${label.fromMonth} ${label.fromYear}<br>TO<br>${label.toMonth} ${label.toYear}`;
+    }
+
+    container.innerHTML += `
+      <div class="label">
+        <div class="content">
+          <p>${label.company}</p>
+          <p>(LUBRICANTS)</p>
+          <p>INVOICE</p>
+          ${monthText ? `<p>${monthText}</p>` : ""}
+        </div>
+      </div>
+    `;
+  });
+}
+
+// Initial load
+generate();
+</script>
+
+</body>
+</html>
